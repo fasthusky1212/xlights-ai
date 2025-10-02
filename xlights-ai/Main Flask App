@@ -1,0 +1,35 @@
+from flask import Flask, request, send_file, render_template
+import os
+import tempfile
+# from auto_xseq import analyze_audio, build_xsq_xml, save_xsq  # Your AI code
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return render_template("index.html")
+
+@app.route('/upload', methods=['POST'])
+def upload():
+    if 'file' not in request.files:
+        return "No file uploaded", 400
+    file = request.files['file']
+    if file.filename == '':
+        return "No file selected", 400
+
+    # Save uploaded audio
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmp:
+        file.save(tmp.name)
+        song_path = tmp.name
+
+    # Run AI sequencer (example placeholder)
+    # analysis = analyze_audio(song_path)
+    # seq = build_xsq_xml(song_path, analysis, model_element_name="FrontTree")
+    # out_path = song_path + ".xsq"
+    # save_xsq(seq, out_path)
+
+    # For now, just return the uploaded file as a test
+    return send_file(song_path, as_attachment=True, download_name="sequence_test.mp3")
+
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=5000)
